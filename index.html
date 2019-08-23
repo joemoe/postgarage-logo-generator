@@ -35,65 +35,73 @@
 	<div id="postgarage-container"></div>
 
 	<script>
-		var string = "Postgarage";
-		var a = string.split("");
-		
-		var density = 0.5;
-		var slotSize = Math.floor(Math.sqrt(window.innerHeight * window.innerWidth * 0.9 / (a.length / density)));
+		var string = "Postgarage";		
+		var density = 0.3;
+		var usedArea = 0.9;
 		var fontSizeFactor = 0.9;
 		var fontSizeRandomizer = 0;
-		var fontSize = Math.round((slotSize - fontSizeRandomizer) * fontSizeFactor);
+		var fontRatioX = 1;
+		var fontRatioY = 2;
 		var randomizer = 0;
 		var useOrdering = true;
 
-		var height = window.innerHeight;
-		var width = window.innerWidth;
+		//calculate the presets
+		var canvasHeight = window.innerHeight * usedArea;
+		var canvasWidth = window.innerWidth * usedArea;
 
-		var hSlots = Math.floor(height / slotSize);
-		var wSlots = Math.floor(width / slotSize);
+		var a = string.split("");
 
-		var offsetY = (height - hSlots * slotSize) / 2;
-		var offsetX = (width - wSlots * slotSize) / 2;
+		var slotArea = canvasWidth * canvasHeight / (a.length / density);
+		var slotHeight = Math.floor(Math.sqrt(slotArea * fontRatioY / fontRatioX));
+		var slotWidth = Math.floor(slotArea / slotHeight);
+		
+		var fontSize = Math.round((slotHeight - fontSizeRandomizer) * fontSizeFactor);
 
-		var slotty = [];
-		for(var i = 0; i < wSlots; i++) {
-			slotty[i] = [];
-			for(var j = 0; j < hSlots; j++) {
-				slotty[i][j] = true;
+		var slotsY = Math.floor(canvasHeight / slotHeight);
+		var slotsX = Math.floor(canvasWidth / slotWidth);
+
+		var offsetY = (canvasHeight - slotsY * slotHeight) / 2;
+		var offsetX = (canvasWidth - slotsX * slotWidth) / 2;
+
+		var slotsOpen = [];
+		for(var i = 0; i < slotsX; i++) {
+			slotsOpen[i] = [];
+			for(var j = 0; j < slotsY; j++) {
+				slotsOpen[i][j] = true;
 			}
 		}
 
 		function isFreeSlot(x, y) {
-			if(slotty[x][y]) {
-				slotty[x][y] = false;
+			if(slotsOpen[x][y]) {
+				slotsOpen[x][y] = false;
 				return true;
 			}
 			return false;
 		}
+
 		var last = 0;
 		var slots = [];
 		for(var i = 0;  i < a.length; i++) {
-			var slot = Math.floor(Math.random() * (hSlots * wSlots));
-			var hSlot = Math.floor(slot / wSlots);
-			var wSlot = Math.floor(slot % wSlots);
-			while(!isFreeSlot(wSlot, hSlot)) {
-				slot = Math.floor(Math.random() * (hSlots * wSlots));
-				hSlot = Math.floor(slot / wSlots);
-				wSlot = Math.floor(slot % wSlots);
+			var slot = Math.floor(Math.random() * (slotsY * slotsX));
+			var slotYi = Math.floor(slot / slotsX);
+			var slotXi = Math.floor(slot % slotsX);
+			for(var j = 0; j < 20 && !isFreeSlot(slotXi, slotYi); j++) {
+				slot = Math.floor(Math.random() * (slotsY * slotsX));
+				slotYi = Math.floor(slot / slotsX);
+				slotXi = Math.floor(slot % slotsX);
 			}
 			slots.push(slot * 1);
 		}
 		if(useOrdering) slots = slots.sort(function(a, b) {return a - b;});
-		console.log(slots);
 		for(var i = 0; i < slots.length; i++) {
-			var hSlot = Math.floor(slots[i] / wSlots);
-			var wSlot = Math.floor(slots[i] % wSlots);
-			var w = Math.round(wSlot * slotSize + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetX;
-			var h = Math.round(hSlot * slotSize + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetY;
+			var slotYi = Math.floor(slots[i] / slotsX);
+			var slotXi = Math.floor(slots[i] % slotsX);
+			var w = Math.round(slotXi * slotWidth + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetX;
+			var h = Math.round(slotYi * slotHeight + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetY;
 			var styleClass = 'postgarage';
 			document.getElementById('postgarage-container').innerHTML += 
 				'<div class="letter ' + styleClass + '" style="'
-					+'width: ' + slotSize + 'px; height: ' + slotSize + 'px; line-height: ' + slotSize + 'px;'
+					+'width: ' + slotWidth + 'px; height: ' + slotHeight + 'px; line-height: ' + slotHeight + 'px;'
 					+ ' font-size: ' + Math.round(fontSize + fontSizeRandomizer * Math.random()) + 'px;'
 					+ 'left: ' + w + 'px; top:' + h + 'px'
 					+ '">' + a[i] + '</div>';
