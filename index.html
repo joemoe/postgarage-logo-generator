@@ -11,10 +11,9 @@
 	<style>
 		body {
 			background-color: #409;
-			color: #ff0;
-			font-family: Oswald;
-			text-transform: uppercase;
 			position: relative;
+			padding: 0px;
+			margin: 0px;
 		}
 		body div.letter {
 			font-size: 100px;
@@ -22,6 +21,11 @@
 			position: absolute;
 			text-align: center;
 			vertical-align: middle;
+		}
+		.postgarage {
+			color: #ff0;
+			font-family: Oswald;
+			text-transform: uppercase;
 		}
 	</style>
 
@@ -31,27 +35,25 @@
 	<div id="postgarage-container"></div>
 
 	<script>
-		// CONFIGURATION 
 		var string = "Postgarage";
-		var slotSize = 120;
+		var a = string.split("");
+		
+		var density = 0.5;
+		var slotSize = Math.floor(Math.sqrt(window.innerHeight * window.innerWidth * 0.9 / (a.length / density)));
 		var fontSizeFactor = 0.9;
 		var fontSizeRandomizer = 0;
 		var fontSize = Math.round((slotSize - fontSizeRandomizer) * fontSizeFactor);
 		var randomizer = 0;
 		var useOrdering = true;
 
-		// APPLICATION LOGIC
-		var a = string.split("");
-
-		var height = window.innerHeight - slotSize;
-		var width = window.innerWidth - slotSize;
+		var height = window.innerHeight;
+		var width = window.innerWidth;
 
 		var hSlots = Math.floor(height / slotSize);
 		var wSlots = Math.floor(width / slotSize);
 
 		var offsetY = (height - hSlots * slotSize) / 2;
 		var offsetX = (width - wSlots * slotSize) / 2;
-		console.log(offsetX, offsetY);
 
 		var slotty = [];
 		for(var i = 0; i < wSlots; i++) {
@@ -88,9 +90,10 @@
 			var wSlot = Math.floor(slots[i] % wSlots);
 			var w = Math.round(wSlot * slotSize + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetX;
 			var h = Math.round(hSlot * slotSize + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetY;
+			var styleClass = 'postgarage';
 			document.getElementById('postgarage-container').innerHTML += 
-				'<div class="letter" style="'
-					+'width: ' + slotSize + 'px; height: ' + slotSize + 'px;'
+				'<div class="letter ' + styleClass + '" style="'
+					+'width: ' + slotSize + 'px; height: ' + slotSize + 'px; line-height: ' + slotSize + 'px;'
 					+ ' font-size: ' + Math.round(fontSize + fontSizeRandomizer * Math.random()) + 'px;'
 					+ 'left: ' + w + 'px; top:' + h + 'px'
 					+ '">' + a[i] + '</div>';
