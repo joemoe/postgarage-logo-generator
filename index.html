@@ -31,7 +31,7 @@
 
 </head>
 
-<body>
+<body id="body">
 	<div id="postgarage-container"></div>
 
 	<script>
@@ -39,13 +39,20 @@
 		var density = 0.3;
 		var usedArea = 0.9;
 		var fontSizeFactor = 0.9;
-		var fontSizeRandomizer = 0;
+		var fontSizeRandomizer = 50;
 		var fontRatioX = 1;
 		var fontRatioY = 2;
-		var randomizer = 0;
+		var randomizer = 20;
 		var useOrdering = true;
+		var colors = ['#409', '#ff0', '#000', '#fff'];
 
 		//calculate the presets
+		var colorBackground = colors.splice(Math.floor(Math.random() * colors.length), 1)[0];
+		var colorForeground = colors[Math.floor(Math.random() * colors.length)];
+		document.getElementById('body').style.backgroundColor = colorBackground;
+
+		console.log(colorBackground, colorForeground);
+
 		var canvasHeight = window.innerHeight * usedArea;
 		var canvasWidth = window.innerWidth * usedArea;
 
@@ -102,6 +109,7 @@
 			document.getElementById('postgarage-container').innerHTML += 
 				'<div class="letter ' + styleClass + '" style="'
 					+'width: ' + slotWidth + 'px; height: ' + slotHeight + 'px; line-height: ' + slotHeight + 'px;'
+					+ ' color: ' + colorForeground + '; '
 					+ ' font-size: ' + Math.round(fontSize + fontSizeRandomizer * Math.random()) + 'px;'
 					+ 'left: ' + w + 'px; top:' + h + 'px'
 					+ '">' + a[i] + '</div>';
