@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>The freaking postgarage logo generator</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+
+	<style>
+		body {
+			background-color: #409;
+			color: #ff0;
+			font-family: Oswald;
+			text-transform: uppercase;
+			position: relative;
+		}
+		body div.letter {
+			font-size: 100px;
+			display: block;
+			position: absolute;
+			text-align: center;
+			vertical-align: middle;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div id="postgarage-container"></div>
+
+	<script>
+		// CONFIGURATION 
+		var string = "Postgarage";
+		var slotSize = 120;
+		var fontSizeFactor = 0.9;
+		var fontSizeRandomizer = 0;
+		var fontSize = Math.round((slotSize - fontSizeRandomizer) * fontSizeFactor);
+		var randomizer = 0;
+		var useOrdering = true;
+
+		// APPLICATION LOGIC
+		var a = string.split("");
+
+		var height = window.innerHeight - slotSize;
+		var width = window.innerWidth - slotSize;
+
+		var hSlots = Math.floor(height / slotSize);
+		var wSlots = Math.floor(width / slotSize);
+
+		var offsetY = (height - hSlots * slotSize) / 2;
+		var offsetX = (width - wSlots * slotSize) / 2;
+		console.log(offsetX, offsetY);
+
+		var slotty = [];
+		for(var i = 0; i < wSlots; i++) {
+			slotty[i] = [];
+			for(var j = 0; j < hSlots; j++) {
+				slotty[i][j] = true;
+			}
+		}
+
+		function isFreeSlot(x, y) {
+			if(slotty[x][y]) {
+				slotty[x][y] = false;
+				return true;
+			}
+			return false;
+		}
+		var last = 0;
+		var slots = [];
+		for(var i = 0;  i < a.length; i++) {
+			var slot = Math.floor(Math.random() * (hSlots * wSlots));
+			var hSlot = Math.floor(slot / wSlots);
+			var wSlot = Math.floor(slot % wSlots);
+			while(!isFreeSlot(wSlot, hSlot)) {
+				slot = Math.floor(Math.random() * (hSlots * wSlots));
+				hSlot = Math.floor(slot / wSlots);
+				wSlot = Math.floor(slot % wSlots);
+			}
+			slots.push(slot * 1);
+		}
+		if(useOrdering) slots = slots.sort(function(a, b) {return a - b;});
+		console.log(slots);
+		for(var i = 0; i < slots.length; i++) {
+			var hSlot = Math.floor(slots[i] / wSlots);
+			var wSlot = Math.floor(slots[i] % wSlots);
+			var w = Math.round(wSlot * slotSize + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetX;
+			var h = Math.round(hSlot * slotSize + (Math.random() * randomizer - randomizer / 2)) + randomizer / 2 + offsetY;
+			document.getElementById('postgarage-container').innerHTML += 
+				'<div class="letter" style="'
+					+'width: ' + slotSize + 'px; height: ' + slotSize + 'px;'
+					+ ' font-size: ' + Math.round(fontSize + fontSizeRandomizer * Math.random()) + 'px;'
+					+ 'left: ' + w + 'px; top:' + h + 'px'
+					+ '">' + a[i] + '</div>';
+		}
+	</script>
+
+
+</body>
+
+</html>
