@@ -47,10 +47,13 @@
 			fontRatioY: 2,
 			randomizer: 0,
 			useOrdering: true,
+			paintCircle: true,
 			colors: ['#409', '#ff0', '#000', '#fff'],
 		}
 
 		//calculate the presets
+		if(conf.paintCircle) conf.string += '°';
+
 		var colorBackground = conf.colors.splice(Math.floor(Math.random() * conf.colors.length), 1)[0];
 		var colorForeground = conf.colors[Math.floor(Math.random() * conf.colors.length)];
 		document.getElementById('body').style.backgroundColor = colorBackground;
@@ -107,14 +110,30 @@
 			var slotXi = Math.floor(slots[i] % slotsX);
 			var w = Math.round(slotXi * slotWidth + (Math.random() * conf.randomizer - conf.randomizer / 2)) + conf.randomizer / 2 + offsetX;
 			var h = Math.round(slotYi * slotHeight + (Math.random() * conf.randomizer - conf.randomizer / 2)) + conf.randomizer / 2 + offsetY;
-			var styleClass = 'postgarage';
-			document.getElementById('postgarage-container').innerHTML += 
-				'<div class="letter ' + styleClass + '" style="'
-					+'width: ' + slotWidth + 'px; height: ' + slotHeight + 'px; line-height: ' + slotHeight + 'px;'
-					+ ' color: ' + colorForeground + '; '
-					+ ' font-size: ' + Math.round(fontSize + conf.fontSizeRandomizer * Math.random()) + 'px;'
-					+ 'left: ' + w + 'px; top:' + h + 'px'
-					+ '">' + a[i] + '</div>';
+			if(!conf.paintCircle || a[i] != '°') {
+				var styleClass = 'postgarage';
+				document.getElementById('postgarage-container').innerHTML += 
+					'<div class="letter ' + styleClass + '" style="'
+						+'width: ' + slotWidth + 'px; height: ' + slotHeight + 'px; line-height: ' + slotHeight + 'px;'
+						+ ' color: ' + colorForeground + '; '
+						+ ' font-size: ' + Math.round(fontSize + conf.fontSizeRandomizer * Math.random()) + 'px;'
+						+ 'left: ' + w + 'px; top:' + h + 'px'
+						+ '">' + a[i] + '</div>';
+			} else {
+				var canvas = document.createElement('canvas');
+				canvas.style.position  = 'absolute';
+				canvas.style.top = h + 'px';
+				canvas.style.left = w + 'px';
+				var context = canvas.getContext('2d');
+
+				context.beginPath();
+				context.arc(slotWidth/2, slotHeight/2, slotWidth / 2 - 10, 0, 2 * Math.PI, false);
+				context.lineWidth = 10;
+				context.strokeStyle = colorForeground;
+				context.stroke();
+
+				document.getElementById('postgarage-container').appendChild(canvas);
+			}
 		}
 	</script>
 
